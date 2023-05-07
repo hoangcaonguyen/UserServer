@@ -2,10 +2,6 @@ package com.example.userserver.dto;
 
 import lombok.*;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
 
 @Getter
 @Setter
