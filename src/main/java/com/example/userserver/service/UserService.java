@@ -110,7 +110,7 @@ public class UserService {
         Assert.isTrue(DataUtils.validateData(userDTO.getUserName(),c.REGEX_INPUT),MessageUtils.getMessage("userName.not.valid", userDTO.getUserName()));
         Assert.isTrue(DataUtils.validateData(userDTO.getEmail(),c.REGEX_EMAIL),MessageUtils.getMessage("email.not.valid", userDTO.getEmail()));
         Assert.isTrue(DataUtils.validateData(userDTO.getPhoneNumber(),c.REGEX_PHONE_NUMBER),MessageUtils.getMessage("phoneNumber.not.valid", userDTO.getPhoneNumber()));
-        Assert.isTrue(DataUtils.validateData(userDTO.getPassWord(),c.REGEX_PASS),MessageUtils.getMessage("passWord.not.valid", userDTO.getPassWord()));
+//        Assert.isTrue(DataUtils.validateData(userDTO.getPassWord(),c.REGEX_PASS),MessageUtils.getMessage("passWord.not.valid", userDTO.getPassWord()));
     }
 
 }
