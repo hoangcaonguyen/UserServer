@@ -8,6 +8,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DataUtils {
+
+//    public static Const c;
+
     public static boolean matchByPattern(String value, String regex){
         if(nullOrEmpty(regex) || nullOrEmpty(value)) {
             return false;
@@ -39,6 +42,46 @@ public class DataUtils {
     public static boolean notNullOrEmpty(UserDTO objects) {
         if(!objects.getUserName().isEmpty()&&!objects.getPassWord().isEmpty()&&
             !objects.getPhoneNumber().isEmpty()&&!objects.getEmail().isEmpty()){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+
+//    public static boolean validateEmail (String email){
+//        Pattern pattern = Pattern.compile(c.REGEX_EMAIL);
+//        if(pattern.matcher(email).matches()){
+//            return true;
+//        }else {
+//            return false;
+//        }
+//    }
+//
+//    public static boolean validatePhone (String phone){
+//        Pattern pattern = Pattern.compile(c.REGEX_PHONE_NUBBER);
+//        if(pattern.matcher(phone).matches()){
+//            return true;
+//        }else {
+//            return false;
+//        }
+//    }
+//    public static boolean validateUserName (String userName, String type){
+//        if(userName.length()>=6 && userName.length()<=15){
+//            Pattern pattern = Pattern.compile(type);
+//            if(pattern.matcher(userName).matches()){
+//                return true;
+//            }else {
+//                return false;
+//            }
+//        }else{
+//            return false;
+//        }
+//    }
+
+    public static boolean validateData (String data, String type){
+        Pattern pattern = Pattern.compile(type);
+        if(pattern.matcher(data).matches()){
             return true;
         }else {
             return false;

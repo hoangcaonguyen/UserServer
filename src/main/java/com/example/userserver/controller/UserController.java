@@ -22,7 +22,7 @@ public class UserController {
     @Autowired
     private RestTemplate restTemplate;
 
-    public static final String url = "https://itemserver-production.up.railway.app";
+    public static final String url = "https://itemserver-production.up.railway.app/";
 
     public UserController(UserService accService) {
         this.accService = accService;
@@ -56,7 +56,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/getAllItem")
-    public ResponseEntity<String> getAllItem(@RequestPart("id") int id){
+    public ResponseEntity<String> getAllItem(@RequestPart("id") String id){
         String functionUrl = "/item/findByOwner/" + id;
 //        HttpHeaders headers = new HttpHeaders();
 //        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
