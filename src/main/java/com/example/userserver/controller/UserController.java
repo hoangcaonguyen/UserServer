@@ -2,17 +2,13 @@ package com.example.userserver.controller;
 
 import com.example.userserver.dto.ResponseDTO;
 import com.example.userserver.dto.UserDTO;
-import com.example.userserver.entity.Item;
-import com.example.userserver.entity.User;
 import com.example.userserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @RequestMapping("/account")
@@ -58,22 +54,12 @@ public class UserController {
     @PostMapping(value = "/getAllItem")
     public ResponseEntity<String> getAllItem(@RequestPart("id") String id){
         String functionUrl = "/item/findByOwner/" + id;
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-//        HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
-//        ResponseEntity<String> response = restTemplate.exchange(url +"/item/findByOwner/" + id, HttpMethod.GET, entity, String.class);
-
         return getData(functionUrl);
     }
 
     @PostMapping(value = "/getAllFolder")
     public ResponseEntity<String> getAllFolder(@RequestPart("id") int id){
         String functionUrl = "/folder/findByOwner/" + id;
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-//        HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
-//        ResponseEntity<String> response = restTemplate.exchange(url +"/item/findByOwner/" + id, HttpMethod.GET, entity, String.class);
-
         return getData(functionUrl);
     }
 
