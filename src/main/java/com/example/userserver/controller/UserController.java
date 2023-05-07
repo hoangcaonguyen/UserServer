@@ -22,7 +22,7 @@ public class UserController {
     @Autowired
     private RestTemplate restTemplate;
 
-    public static final String url = "https://itemserver-production.up.railway.app/";
+    public static final String url = "https://itemserver-production.up.railway.app";
 
     public UserController(UserService accService) {
         this.accService = accService;
