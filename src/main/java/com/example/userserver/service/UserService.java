@@ -57,7 +57,7 @@ public class UserService {
     }
     @Transactional
     public ResponseDTO updateAccount(UserDTO userDTO){
-//        checkData(userDTO);
+        checkData(userDTO);
 //        Assert.isTrue(DataUtils.notNullOrEmpty(userDTO), MessageUtils.getMessage("error.input.null", userDTO));;
 //        ResponseDTO responseDTO = failResponse();
         User acc = userRepository.findByUserName(userDTO.getUserName());
