@@ -33,7 +33,7 @@ public class UserService {
 //        Assert.isTrue(DataUtils.notNullOrEmpty(userDTO), MessageUtils.getMessage("error.input.null", userDTO));
 //        Assert.isTrue(DataUtils.validateEmail(userDTO.getEmail()),MessageUtils.getMessage("email.not.valid", userDTO.getEmail()));
 //        Assert.isTrue(DataUtils.validatePhone(userDTO.getPhoneNumber()),MessageUtils.getMessage("phoneNumber.not.valid", userDTO.getPhoneNumber()));
-//        checkData(userDTO);
+        checkData(userDTO);
 //        acc.setId(service.getSequenceNumber(SEQUENCE_NAME));
         User user1 = userRepository.findByUserName(userDTO.getUserName());
         Assert.isNull(user1, MessageUtils.getMessage("userName.not.valid", userDTO.getUserName()));
