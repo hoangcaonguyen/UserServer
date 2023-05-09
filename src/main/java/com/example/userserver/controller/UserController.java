@@ -1,5 +1,6 @@
 package com.example.userserver.controller;
 
+import com.example.userserver.dto.LoginDTO;
 import com.example.userserver.dto.ResponseDTO;
 import com.example.userserver.dto.UserDTO;
 import com.example.userserver.service.UserService;
@@ -58,9 +59,23 @@ public class UserController {
     }
 
     @PostMapping(value = "/getAllFolder")
-    public ResponseEntity<String> getAllFolder(@RequestPart("id") int id){
+    public ResponseEntity<String> getAllFolder(@RequestPart("id") String id){
         String functionUrl = "/folder/findByOwner/" + id;
         return getData(functionUrl);
+    }
+
+    @PostMapping(value = "/findUser")
+    public ResponseDTO findUser(@RequestPart("userName") String userName){
+        ResponseDTO response = new ResponseDTO();
+        response = accService.findAccount(userName);
+        return response;
+    }
+
+    @PostMapping(value = "/login")
+    public ResponseDTO login(@RequestBody LoginDTO login){
+        ResponseDTO response = new ResponseDTO();
+        response = accService.login(login);
+        return response;
     }
 
     public ResponseEntity<String> getData(String functionUrl){

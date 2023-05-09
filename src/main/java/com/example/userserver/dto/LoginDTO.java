@@ -1,13 +1,11 @@
 package com.example.userserver.dto;
 
-import lombok.*;
-
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-public class UserDTO {
+public class LoginDTO {
     private String userName;
     private String passWord;
-    private String phoneNumber;
-    private String email;
 }

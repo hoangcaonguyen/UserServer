@@ -3,6 +3,7 @@ package com.example.userserver.service;
 import com.example.userserver.common.Const;
 import com.example.userserver.common.DataUtils;
 import com.example.userserver.common.MessageUtils;
+import com.example.userserver.dto.LoginDTO;
 import com.example.userserver.dto.ResponseDTO;
 import com.example.userserver.dto.UserDTO;
 import com.example.userserver.entity.User;
@@ -89,6 +90,28 @@ public class UserService {
         return responseDTO;
     }
 
+    public ResponseDTO findAccount(String userName){
+        User acc = userRepository.findByUserName(userName);
+        Assert.notNull(acc, MessageUtils.getMessage("error.notfound", userName));
+        ResponseDTO responseDTO = successResponse();
+        responseDTO.setResponse(acc);
+        return responseDTO;
+    }
+
+    public ResponseDTO login(LoginDTO login){
+        User acc = userRepository.findByUserName(login.getUserName());
+        Assert.notNull(acc, MessageUtils.getMessage("error.notfound", login.getUserName()));
+        String encodedString = Base64.getEncoder().encodeToString(login.getPassWord().getBytes());
+        ResponseDTO responseDTO = new ResponseDTO();
+        if(encodedString.equals(acc.getPassWord())){
+            responseDTO.setCode(200);
+            responseDTO.setMessage(MessageUtils.getMessage("success"));
+        }else {
+            responseDTO.setCode(400);
+            responseDTO.setMessage(MessageUtils.getMessage("wrong password"));
+        }
+        return responseDTO;
+    }
 //    public ResponseDTO findUser
 
     public ResponseDTO successResponse(){
