@@ -6,6 +6,7 @@ import com.example.userserver.dto.UserDTO;
 import com.example.userserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,6 +28,7 @@ public class UserController {
 
 
     @PostMapping("/add")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseDTO addAccount(@RequestBody UserDTO accDTO){
         ResponseDTO response = new ResponseDTO();
         response = accService.addAccount(accDTO);
@@ -34,37 +36,42 @@ public class UserController {
     }
 
     @PostMapping("/update")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseDTO updateAccount(@RequestBody UserDTO userDTO){
         ResponseDTO response = new ResponseDTO();
         response = accService.updateAccount(userDTO);
         return response;
     }
     @GetMapping("/list")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseDTO getAllAccount(){
         ResponseDTO response = new ResponseDTO();
         response = accService.getAllAccount();
         return response;
     }
-    @DeleteMapping(value = "/delete/{id}")
-    public ResponseDTO deleteUser(@PathVariable(name = "id") Integer userId) {
-        ResponseDTO response = new ResponseDTO();
-        response = accService.deleteAccount(userId);
-        return response;
-    }
+//    @DeleteMapping(value = "/delete/{id}")
+//    public ResponseDTO deleteUser(@PathVariable(name = "id") Integer userId) {
+//        ResponseDTO response = new ResponseDTO();
+//        response = accService.deleteAccount(userId);
+//        return response;
+//    }
 
     @PostMapping(value = "/getAllItem")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<String> getAllItem(@RequestPart("id") String id){
         String functionUrl = "/item/findByOwner/" + id;
         return getData(functionUrl);
     }
 
     @PostMapping(value = "/getAllFolder")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<String> getAllFolder(@RequestPart("id") String id){
         String functionUrl = "/folder/findByOwner/" + id;
         return getData(functionUrl);
     }
 
     @PostMapping(value = "/findUser")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseDTO findUser(@RequestPart("userName") String userName){
         ResponseDTO response = new ResponseDTO();
         response = accService.findAccount(userName);
@@ -72,6 +79,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/login")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseDTO login(@RequestBody LoginDTO login){
         ResponseDTO response = new ResponseDTO();
         response = accService.login(login);

@@ -7,16 +7,23 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Document(collection = "user")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
-    @Transient
-    public static final String SEQUENCE_NAME = "user_sequence";
+public class User /*implements UserDetails*/ {
+
     @Id
-    private int id;
+    private String id;
     @Field(name = "userName")
     @NonNull
     private String userName;
@@ -25,7 +32,7 @@ public class User {
     @NonNull
     private String passWord;
     @Field(name = "roles")
-    private int role;
+    private Set<Role> roles = new HashSet<>();
     private String phoneNumber;
     @Field(name = "email")
     @Indexed(unique = true)
@@ -35,4 +42,10 @@ public class User {
     private int status;
     @Field(name = "upDateTime")
     public  long upDateTime;
+
+
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + this.role);
+//        return Arrays.asList(authority);}
 }
