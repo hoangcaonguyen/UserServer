@@ -58,7 +58,7 @@ public class AuthController {
 		return accService.refreshToken(request);
 	}
 
-	@PostMapping("/signout")
+	@PostMapping("/signOut")
 	public ResponseEntity<?> logoutUser(@RequestPart("id") String id) {
 		return accService.logoutUser(id);
 	}
