@@ -1,15 +1,16 @@
 package com.example.userserver.dto;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
+
 
 @Getter
 @Setter
 public class LoginDTO {
-    @NotBlank
+    @NonNull
     private String userName;
-    @NotBlank
+    @NonNull
     private String passWord;
 }

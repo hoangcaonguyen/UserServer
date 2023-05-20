@@ -1,9 +1,10 @@
 package com.example.userserver.dto;
 
-import javax.validation.constraints.NotBlank;
+import lombok.NonNull;
+
 
 public class TokenRefreshRequest {
-    @NotBlank
+    @NonNull
     private String refreshToken;
 
     public String getRefreshToken() {

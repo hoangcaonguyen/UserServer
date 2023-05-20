@@ -1,16 +1,18 @@
 package com.example.userserver.dto;
 
+import lombok.NonNull;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Set;
 
 public class SignupRequest {
-    @NotBlank
+    @NonNull
     @Size(min = 3, max = 20)
     private String userName;
- 
-    @NotBlank
+
+    @NonNull
     @Size(max = 50)
     @Email
     private String email;
