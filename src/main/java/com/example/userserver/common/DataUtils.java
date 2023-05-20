@@ -1,5 +1,7 @@
 package com.example.userserver.common;
 
+import com.example.userserver.dto.LoginDTO;
+import com.example.userserver.dto.SignupRequest;
 import com.example.userserver.dto.UserDTO;
 
 import java.util.Collection;
@@ -42,6 +44,15 @@ public class DataUtils {
     public static boolean notNullOrEmpty(UserDTO objects) {
         if(!objects.getUserName().isEmpty()&&!objects.getPassWord().isEmpty()&&
             !objects.getPhoneNumber().isEmpty()&&!objects.getEmail().isEmpty()){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    public static boolean notNullOrEmpty(SignupRequest objects) {
+        if(!objects.getUserName().isEmpty()&&!objects.getPassWord().isEmpty()&&
+                !objects.getPhoneNumber().isEmpty()&&!objects.getEmail().isEmpty()){
             return true;
         }else {
             return false;

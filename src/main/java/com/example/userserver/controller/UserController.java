@@ -1,5 +1,6 @@
 package com.example.userserver.controller;
 
+import com.example.userserver.common.MessageUtils;
 import com.example.userserver.dto.LoginDTO;
 import com.example.userserver.dto.ResponseDTO;
 import com.example.userserver.dto.UserDTO;
@@ -7,9 +8,11 @@ import com.example.userserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
 @RestController
@@ -27,13 +30,13 @@ public class UserController {
     }
 
 
-    @PostMapping("/add")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseDTO addAccount(@RequestBody UserDTO accDTO){
-        ResponseDTO response = new ResponseDTO();
-        response = accService.addAccount(accDTO);
-        return response;
-    }
+//    @PostMapping("/add")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    public ResponseDTO addAccount(@RequestBody UserDTO accDTO){
+//        ResponseDTO response = new ResponseDTO();
+//        response = accService.addAccount(accDTO);
+//        return response;
+//    }
 
     @PostMapping("/update")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -49,12 +52,13 @@ public class UserController {
         response = accService.getAllAccount();
         return response;
     }
-//    @DeleteMapping(value = "/delete/{id}")
-//    public ResponseDTO deleteUser(@PathVariable(name = "id") Integer userId) {
-//        ResponseDTO response = new ResponseDTO();
-//        response = accService.deleteAccount(userId);
-//        return response;
-//    }
+    @DeleteMapping(value = "/delete/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseDTO deleteUser(@PathVariable(name = "id") String userId) {
+        ResponseDTO response = new ResponseDTO();
+        response = accService.deleteAccount(userId);
+        return response;
+    }
 
     @PostMapping(value = "/getAllItem")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -73,18 +77,19 @@ public class UserController {
     @PostMapping(value = "/findUser")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseDTO findUser(@RequestPart("userName") String userName){
+//        Assert.notNull(request, MessageUtils.getMessage("passWord.not.valid", request);
         ResponseDTO response = new ResponseDTO();
         response = accService.findAccount(userName);
         return response;
     }
 
-    @PostMapping(value = "/login")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseDTO login(@RequestBody LoginDTO login){
-        ResponseDTO response = new ResponseDTO();
-        response = accService.login(login);
-        return response;
-    }
+//    @PostMapping(value = "/login")
+//    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+//    public ResponseDTO login(@RequestBody LoginDTO login){
+//        ResponseDTO response = new ResponseDTO();
+//        response = accService.login(login);
+//        return response;
+//    }
 
     public ResponseEntity<String> getData(String functionUrl){
         HttpHeaders headers = new HttpHeaders();

@@ -5,8 +5,10 @@ import com.example.userserver.common.DataUtils;
 import com.example.userserver.common.MessageUtils;
 import com.example.userserver.dto.*;
 import com.example.userserver.entity.ERole;
+import com.example.userserver.entity.RefreshToken;
 import com.example.userserver.entity.Role;
 import com.example.userserver.entity.User;
+import com.example.userserver.exception.TokenRefreshException;
 import com.example.userserver.jwt.JwtUtils;
 import com.example.userserver.repository.RoleRepository;
 import com.example.userserver.repository.UserRepository;
@@ -45,6 +47,9 @@ public class UserService {
     @Autowired
     PasswordEncoder encoder;
 
+    @Autowired
+    RefreshTokenService refreshTokenService;
+
 
     public UserService(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
@@ -52,44 +57,33 @@ public class UserService {
     }
 
 
-    public ResponseDTO addAccount(UserDTO userDTO){
-//        ResponseDTO responseDTO = new ResponseDTO();
-        User acc = new User();
-//        Assert.isTrue(DataUtils.notNullOrEmpty(userDTO), MessageUtils.getMessage("error.input.null", userDTO));
-//        Assert.isTrue(DataUtils.validateEmail(userDTO.getEmail()),MessageUtils.getMessage("email.not.valid", userDTO.getEmail()));
-//        Assert.isTrue(DataUtils.validatePhone(userDTO.getPhoneNumber()),MessageUtils.getMessage("phoneNumber.not.valid", userDTO.getPhoneNumber()));
-        checkData(userDTO);
-//        acc.setId(service.getSequenceNumber(SEQUENCE_NAME));
-        User user1 = userRepository.findByUserName(userDTO.getUserName());
-        Assert.isNull(user1, MessageUtils.getMessage("userName.not.valid", userDTO.getUserName()));
-//        acc.setId(service.countId());
-        acc.setUserName(userDTO.getUserName());
-        String encodedString = Base64.getEncoder().encodeToString(userDTO.getPassWord().getBytes());
-        acc.setPassWord(encodedString);
-//        acc.setRoles(1);
-        acc.setPhoneNumber(userDTO.getPhoneNumber());
-        user1 = userRepository.findByEmail(userDTO.getEmail());
-        Assert.isNull(user1, MessageUtils.getMessage("success.found", userDTO.getEmail()));
-        acc.setEmail(userDTO.getEmail());
-        acc.setStatus(1);
-        acc.setUpDateTime(System.currentTimeMillis());
-        userRepository.save(acc);
-        ResponseDTO responseDTO = successResponse();
-        responseDTO.setResponse(userRepository.findByUserName(acc.getUserName()));
-//        responseDTO.setCode(200);
-//        responseDTO.setMessage(MessageUtils.getMessage("success.upload"));
-        return responseDTO;
-    }
+    //    public ResponseDTO addAccount(UserDTO userDTO){
+//        User acc = new User();
+//        checkData(userDTO);
+//        User user1 = userRepository.findByUserName(userDTO.getUserName());
+//        Assert.isNull(user1, MessageUtils.getMessage("userName.not.valid", userDTO.getUserName()));
+//        acc.setUserName(userDTO.getUserName());
+//        String encodedString = Base64.getEncoder().encodeToString(userDTO.getPassWord().getBytes());
+//        acc.setPassWord(encodedString);
+//        acc.setPhoneNumber(userDTO.getPhoneNumber());
+//        user1 = userRepository.findByEmail(userDTO.getEmail());
+//        Assert.isNull(user1, MessageUtils.getMessage("success.found", userDTO.getEmail()));
+//        acc.setEmail(userDTO.getEmail());
+//        acc.setStatus(1);
+//        acc.setUpDateTime(System.currentTimeMillis());
+//        userRepository.save(acc);
+//        ResponseDTO responseDTO = successResponse();
+//        responseDTO.setResponse(userRepository.findByUserName(acc.getUserName()));
+//        return responseDTO;
+//    }
     @Transactional
-    public ResponseDTO updateAccount(UserDTO userDTO){
+    public ResponseDTO updateAccount(UserDTO userDTO) {
         checkData(userDTO);
-//        Assert.isTrue(DataUtils.notNullOrEmpty(userDTO), MessageUtils.getMessage("error.input.null", userDTO));;
-//        ResponseDTO responseDTO = failResponse();
         User acc = userRepository.findByUserName(userDTO.getUserName());
         Assert.notNull(acc, MessageUtils.getMessage("error.notfound", userDTO.getUserName()));
         Assert.notNull(acc, MessageUtils.getMessage("error.notfound", userDTO.getEmail()));
-        String encodedString = Base64.getEncoder().encodeToString(userDTO.getPassWord().getBytes());
-        acc.setPassWord(encodedString);
+//        String encodedString = Base64.getEncoder().encodeToString(userDTO.getPassWord().getBytes());
+        acc.setPassWord(encoder.encode(userDTO.getPassWord()));
         acc.setPhoneNumber(userDTO.getPhoneNumber());
         acc.setEmail(userDTO.getEmail());
         acc.setUpDateTime(System.currentTimeMillis());
@@ -99,22 +93,23 @@ public class UserService {
         return responseDTO;
     }
 
-    public ResponseDTO getAllAccount(){
+    public ResponseDTO getAllAccount() {
         ResponseDTO responseDTO = successResponse();
         responseDTO.setResponse(userRepository.findAllByStatus(1));
         return responseDTO;
     }
-//    public ResponseDTO deleteAccount(int id){
-//        Assert.notNull(id, MessageUtils.getMessage("error.notfound", id));
-//        User acc =userRepository.findById(id);
-//        acc.setStatus(0);
-//        acc.setUpDateTime(System.currentTimeMillis());
-//        userRepository.save(acc);
-//        ResponseDTO responseDTO = successResponse();
-//        return responseDTO;
-//    }
 
-    public ResponseDTO findAccount(String userName){
+    public ResponseDTO deleteAccount(String id) {
+        Assert.notNull(id, MessageUtils.getMessage("error.notfound", id));
+        User acc = userRepository.getById(id);
+        acc.setStatus(0);
+        acc.setUpDateTime(System.currentTimeMillis());
+        userRepository.save(acc);
+        ResponseDTO responseDTO = successResponse();
+        return responseDTO;
+    }
+
+    public ResponseDTO findAccount(String userName) {
         User acc = userRepository.findByUserName(userName);
         Assert.notNull(acc, MessageUtils.getMessage("error.notfound", userName));
         ResponseDTO responseDTO = successResponse();
@@ -122,85 +117,79 @@ public class UserService {
         return responseDTO;
     }
 
-    public ResponseDTO login(LoginDTO login){
-        User acc = userRepository.findByUserName(login.getUserName());
-        Assert.notNull(acc, MessageUtils.getMessage("error.notfound", login.getUserName()));
-        String encodedString = Base64.getEncoder().encodeToString(login.getPassWord().getBytes());
-        ResponseDTO responseDTO = new ResponseDTO();
-        if(encodedString.equals(acc.getPassWord())){
-            responseDTO.setCode(200);
-            responseDTO.setMessage(MessageUtils.getMessage("success"));
-        }else {
-            responseDTO.setCode(400);
-            responseDTO.setMessage(MessageUtils.getMessage("wrong password"));
-        }
-        return responseDTO;
-    }
-//    public ResponseDTO findUser
 
-    public ResponseDTO successResponse(){
+    public ResponseDTO successResponse() {
         ResponseDTO responseDTO = new ResponseDTO();
         responseDTO.setCode(200);
         responseDTO.setMessage(MessageUtils.getMessage("success.upload"));
         return responseDTO;
     }
 
-    public ResponseDTO failResponse (){
+    public ResponseDTO failResponse(String message) {
         ResponseDTO responseDTO = new ResponseDTO();
         responseDTO.setCode(400);
-        responseDTO.setMessage(MessageUtils.getMessage("error.upload"));
+        responseDTO.setMessage(message);
         return responseDTO;
     }
 
-    public void checkData(UserDTO userDTO){
+    public void checkData(UserDTO userDTO) {
         Assert.isTrue(DataUtils.notNullOrEmpty(userDTO), MessageUtils.getMessage("error.input.null", userDTO));
-        Assert.isTrue(DataUtils.validateData(userDTO.getUserName(),c.REGEX_INPUT),MessageUtils.getMessage("userName.not.valid", userDTO.getUserName()));
-        Assert.isTrue(DataUtils.validateData(userDTO.getEmail(),c.REGEX_EMAIL),MessageUtils.getMessage("email.not.valid", userDTO.getEmail()));
-        Assert.isTrue(DataUtils.validateData(userDTO.getPhoneNumber(),c.REGEX_PHONE_NUMBER),MessageUtils.getMessage("phoneNumber.not.valid", userDTO.getPhoneNumber()));
-        Assert.isTrue(DataUtils.validateData(userDTO.getPassWord(),c.REGEX_PASS),MessageUtils.getMessage("passWord.not.valid", userDTO.getPassWord()));
+        Assert.isTrue(DataUtils.validateData(userDTO.getUserName(), c.REGEX_INPUT), MessageUtils.getMessage("userName.not.valid", userDTO.getUserName()));
+        Assert.isTrue(DataUtils.validateData(userDTO.getEmail(), c.REGEX_EMAIL), MessageUtils.getMessage("email.not.valid", userDTO.getEmail()));
+        Assert.isTrue(DataUtils.validateData(userDTO.getPhoneNumber(), c.REGEX_PHONE_NUMBER), MessageUtils.getMessage("phoneNumber.not.valid", userDTO.getPhoneNumber()));
+        Assert.isTrue(DataUtils.validateData(userDTO.getPassWord(), c.REGEX_PASS), MessageUtils.getMessage("passWord.not.valid", userDTO.getPassWord()));
     }
 
-    public ResponseEntity<?> authenticateUser( LoginDTO loginRequest){
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassWord()));
+    public void checkData(SignupRequest signUpRequest) {
+        Assert.isTrue(DataUtils.notNullOrEmpty(signUpRequest), MessageUtils.getMessage("error.input.null", signUpRequest));
+        Assert.isTrue(DataUtils.validateData(signUpRequest.getUserName(), c.REGEX_INPUT), MessageUtils.getMessage("userName.not.valid", signUpRequest.getUserName()));
+        Assert.isTrue(DataUtils.validateData(signUpRequest.getEmail(), c.REGEX_EMAIL), MessageUtils.getMessage("email.not.valid", signUpRequest.getEmail()));
+        Assert.isTrue(DataUtils.validateData(signUpRequest.getPhoneNumber(), c.REGEX_PHONE_NUMBER), MessageUtils.getMessage("phoneNumber.not.valid", signUpRequest.getPhoneNumber()));
+        Assert.isTrue(DataUtils.validateData(signUpRequest.getPassWord(), c.REGEX_PASS), MessageUtils.getMessage("passWord.not.valid", signUpRequest.getPassWord()));
+    }
+
+    public ResponseEntity<?> authenticateUser(LoginDTO loginRequest) {
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassWord()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
+
+        String jwt = jwtUtils.generateJwtToken(userDetails);
+        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new JwtResponse(jwt, roles));
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
+        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), refreshToken.getToken(), roles));
     }
 
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseDTO registerUser(SignupRequest signUpRequest) {
+        checkData(signUpRequest);
         if (userRepository.existsByUserName(signUpRequest.getUserName())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+            ResponseDTO responseDTO = failResponse("Error: Username is already taken!");
+            return responseDTO;
+//            return ResponseEntity
+//                    .badRequest()
+//                    .body(new MessageResponse("Error: Username is already taken!"));
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+            ResponseDTO responseDTO = failResponse("Error: Email is already in use!");
+            return responseDTO;
+//            return ResponseEntity
+//                    .badRequest()
+//                    .body(new MessageResponse("Error: Email is already in use!"));
         }
 
-        // Create new user's account
-//        User user = new User(signUpRequest.getUsername(),
-//                signUpRequest.getEmail(),
-//                encoder.encode(signUpRequest.getPassword()),
-//                signUpRequest.getPhoneNumber()
-//        );
         User user = new User();
         user.setUserName(signUpRequest.getUserName());
         user.setEmail(signUpRequest.getEmail());
         user.setPhoneNumber(signUpRequest.getPhoneNumber());
         user.setPassWord(encoder.encode(signUpRequest.getPassWord()));
         user.setStatus(1);
-
+        user.setUpDateTime(System.currentTimeMillis());
 
         Set<String> strRoles = signUpRequest.getRoles();
         Set<Role> roles = new HashSet<>();
@@ -229,7 +218,25 @@ public class UserService {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return successResponse();
     }
 
+    public ResponseEntity<?> refreshToken(TokenRefreshRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
+
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String token = jwtUtils.generateTokenFromUsername(user.getUserName());
+                    return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+                })
+                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
+                        "Refresh token is not in database!"));
+    }
+
+    public ResponseEntity<?> logoutUser(String id) {
+        refreshTokenService.deleteByUserId(id);
+        return ResponseEntity.ok(new MessageResponse("Log out successful!"));
+    }
 }
