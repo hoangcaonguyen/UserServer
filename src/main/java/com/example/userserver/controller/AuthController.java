@@ -38,9 +38,9 @@ public class AuthController {
 		this.accService = accService;
 	}
 
-	@PostMapping("/signin")
+	@PostMapping("/signIn")
 	@PermitAll
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginDTO loginRequest) {
+	public ResponseEntity<?> authenticateUser(@RequestBody LoginDTO loginRequest) {
 //		accService.authenticateUser(loginRequest);
 		return accService.authenticateUser(loginRequest);
 	}
