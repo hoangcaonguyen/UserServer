@@ -43,9 +43,4 @@ public class User /*implements UserDetails*/ {
     @Field(name = "upDateTime")
     public  long upDateTime;
 
-
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + this.role);
-//        return Arrays.asList(authority);}
 }
