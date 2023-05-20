@@ -53,8 +53,8 @@ public class AuthController {
 		return accService.registerUser(signUpRequest);
 	}
 
-	@PostMapping("/refreshtoken")
-	public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
+	@PostMapping("/refreshToken")
+	public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
 		return accService.refreshToken(request);
 	}
 
