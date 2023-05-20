@@ -46,12 +46,12 @@ public class AuthController {
 	}
 
 	@PostMapping("/signup")
-	public ResponseDTO registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+	public ResponseDTO registerUser(@RequestBody SignupRequest signUpRequest) {
 		return accService.registerUser(signUpRequest);
 	}
 
 	@PostMapping("/refreshToken")
-	public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequest request) {
+	public ResponseEntity<?> refreshToken(@RequestBody TokenRefreshRequest request) {
 		return accService.refreshToken(request);
 	}
 
