@@ -9,22 +9,17 @@ import java.util.Set;
 
 public class SignupRequest {
     @NonNull
-    @Size(min = 3, max = 20)
     private String userName;
 
     @NonNull
-    @Size(max = 50)
-    @Email
     private String email;
     
     private Set<String> roles;
-    
-    @NotBlank
-    @Size(min = 6, max = 40)
+
+    @NonNull
     private String passWord;
 
-    @NotBlank
-    @Size(min = 6, max = 40)
+    @NonNull
     private String phoneNumber;
   
     public String getUserName() {
