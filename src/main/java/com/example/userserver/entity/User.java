@@ -18,7 +18,7 @@ import java.util.Set;
 
 @Document(collection = "user")
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class User /*implements UserDetails*/ {
 

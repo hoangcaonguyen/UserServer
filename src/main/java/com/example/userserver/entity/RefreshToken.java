@@ -11,11 +11,11 @@ import java.time.Instant;
 @Document(collection = "refreshToken")
 public class RefreshToken {
   @Id
-  private long id;
-  @Field(name = "user")
+  private String id;
+  @Field(name = "userId")
   @Indexed(unique = true)
   @NonNull
-  private User user;
+  private String userId;
   @Field(name = "token")
   @Indexed(unique = true)
   @NonNull
@@ -28,20 +28,20 @@ public class RefreshToken {
   public RefreshToken() {
   }
 
-  public long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(String id) {
     this.id = id;
   }
 
-  public User getUser() {
-    return user;
+  public String getUserId() {
+    return userId;
   }
 
-  public void setUser(User user) {
-    this.user = user;
+  public void setUserId(String userId) {
+    this.userId = userId;
   }
 
   public String getToken() {

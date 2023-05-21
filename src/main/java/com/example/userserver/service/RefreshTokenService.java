@@ -1,6 +1,7 @@
 package com.example.userserver.service;
 
 
+import com.example.userserver.common.ULID;
 import com.example.userserver.entity.RefreshToken;
 import com.example.userserver.exception.TokenRefreshException;
 import com.example.userserver.repository.RefreshTokenRepository;
@@ -22,9 +23,6 @@ public class RefreshTokenService {
   @Autowired
   private RefreshTokenRepository refreshTokenRepository;
 
-  @Autowired
-  private UserRepository userRepository;
-
   public Optional<RefreshToken> findByToken(String token) {
     return refreshTokenRepository.findByToken(token);
   }
@@ -32,7 +30,8 @@ public class RefreshTokenService {
   public RefreshToken createRefreshToken(String userId) {
     RefreshToken refreshToken = new RefreshToken();
 
-    refreshToken.setUser(userRepository.getById(userId));
+    refreshToken.setId(new ULID().nextULID());
+    refreshToken.setUserId(userId);
     refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
     refreshToken.setToken(UUID.randomUUID().toString());
 
@@ -51,6 +50,6 @@ public class RefreshTokenService {
 
   @Transactional
   public int deleteByUserId(String userId) {
-    return refreshTokenRepository.deleteByUser(userRepository.findById(userId).get());
+    return refreshTokenRepository.deleteByUserId(userId);
   }
 }

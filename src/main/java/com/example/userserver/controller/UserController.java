@@ -39,21 +39,18 @@ public class UserController {
 //    }
 
     @PostMapping("/update")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseDTO updateAccount(@RequestBody UserDTO userDTO){
         ResponseDTO response = new ResponseDTO();
         response = accService.updateAccount(userDTO);
         return response;
     }
     @GetMapping("/list")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseDTO getAllAccount(){
         ResponseDTO response = new ResponseDTO();
         response = accService.getAllAccount();
         return response;
     }
     @DeleteMapping(value = "/delete/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseDTO deleteUser(@PathVariable(name = "id") String userId) {
         ResponseDTO response = new ResponseDTO();
         response = accService.deleteAccount(userId);
@@ -61,26 +58,28 @@ public class UserController {
     }
 
     @PostMapping(value = "/getAllItem")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<String> getAllItem(@RequestPart("id") String id){
         String functionUrl = "/item/findByOwner/" + id;
         return getData(functionUrl);
     }
 
     @PostMapping(value = "/getAllFolder")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<String> getAllFolder(@RequestPart("id") String id){
         String functionUrl = "/folder/findByOwner/" + id;
         return getData(functionUrl);
     }
 
     @PostMapping(value = "/findUser")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseDTO findUser(@RequestPart("userName") String userName){
 //        Assert.notNull(request, MessageUtils.getMessage("passWord.not.valid", request);
         ResponseDTO response = new ResponseDTO();
         response = accService.findAccount(userName);
         return response;
+    }
+
+    @GetMapping(value = "/check-exist")
+    public ResponseDTO checkExist(){
+        return accService.successResponse();
     }
 
 //    @PostMapping(value = "/login")

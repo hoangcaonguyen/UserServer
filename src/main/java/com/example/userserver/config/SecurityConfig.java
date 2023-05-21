@@ -1,7 +1,8 @@
 package com.example.userserver.config;
 
-import com.example.userserver.jwt.AuthEntryPointJwt;
 import com.example.userserver.jwt.AuthTokenFilter;
+import com.example.userserver.jwt.CustomAccessDeniedHandler;
+import com.example.userserver.jwt.CustomAuthenticationEntryPoint;
 import com.example.userserver.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +30,9 @@ public class SecurityConfig {
     UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -82,10 +85,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .exceptionHandling()
+                .accessDeniedHandler(customAccessDeniedHandler)
+                .authenticationEntryPoint(customAuthenticationEntryPoint).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/test/**").permitAll()
+                .antMatchers("/account/update").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/account/list").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/account/getAllItem").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/account/getAllFolder").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/account/findUser").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/account/check-exist").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/account/delete/**").hasAnyRole("ADMIN")
                 .anyRequest().authenticated();
 
         http.authenticationProvider(authenticationProvider());

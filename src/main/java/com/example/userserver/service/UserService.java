@@ -3,6 +3,7 @@ package com.example.userserver.service;
 import com.example.userserver.common.Const;
 import com.example.userserver.common.DataUtils;
 import com.example.userserver.common.MessageUtils;
+import com.example.userserver.common.ULID;
 import com.example.userserver.dto.*;
 import com.example.userserver.entity.ERole;
 import com.example.userserver.entity.RefreshToken;
@@ -117,7 +118,7 @@ public class UserService {
     public ResponseDTO successResponse() {
         ResponseDTO responseDTO = new ResponseDTO();
         responseDTO.setCode(200);
-        responseDTO.setMessage(MessageUtils.getMessage("success.upload"));
+        responseDTO.setMessage(MessageUtils.getMessage("success"));
         return responseDTO;
     }
 
@@ -180,6 +181,7 @@ public class UserService {
         }
 
         User user = new User();
+        user.setId(new ULID().nextULID());
         user.setUserName(signUpRequest.getUserName());
         user.setEmail(signUpRequest.getEmail());
         user.setPhoneNumber(signUpRequest.getPhoneNumber());
@@ -222,8 +224,9 @@ public class UserService {
 
         return refreshTokenService.findByToken(requestRefreshToken)
                 .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getUser)
-                .map(user -> {
+                .map(RefreshToken::getUserId)
+                .map(userId -> {
+                    User user  = userRepository.getById(userId);
                     String token = jwtUtils.generateTokenFromUsername(user.getUserName());
                     return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
                 })
