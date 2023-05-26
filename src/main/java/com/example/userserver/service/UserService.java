@@ -145,6 +145,7 @@ public class UserService {
         Assert.isTrue(DataUtils.validateData(signUpRequest.getPassWord(), c.REGEX_PASS), MessageUtils.getMessage("passWord.not.valid", signUpRequest.getPassWord()));
     }
 
+    @Transactional
     public ResponseEntity<?> authenticateUser(LoginDTO loginRequest) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassWord()));
@@ -234,8 +235,8 @@ public class UserService {
                         "Refresh token is not in database!"));
     }
 
-    public ResponseEntity<?> logoutUser(String id) {
-        refreshTokenService.deleteByUserId(id);
+    public ResponseEntity<?> logoutUser(String refreshToken) {
+        refreshTokenService.deleteByToken(refreshToken);
         return ResponseEntity.ok(new MessageResponse("Log out successful!"));
     }
 }
