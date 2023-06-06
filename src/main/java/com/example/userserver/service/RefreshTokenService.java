@@ -49,7 +49,7 @@ public class RefreshTokenService {
   }
 
   @Transactional
-  public boolean deleteByToken(String refreshToken) {
+  public int deleteByToken(String refreshToken) {
     return refreshTokenRepository.deleteByToken(refreshToken);
   }
 }
