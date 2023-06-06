@@ -55,7 +55,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/signOut")
-	public ResponseEntity<?> logoutUser(@RequestPart("id") String id) {
-		return accService.logoutUser(id);
+	public ResponseEntity<?> logoutUser(@RequestPart("refreshToken") String refreshToken) {
+		return accService.logoutUser(refreshToken);
 	}
 }
