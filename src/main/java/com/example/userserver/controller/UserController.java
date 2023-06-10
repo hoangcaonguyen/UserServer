@@ -92,9 +92,10 @@ public class UserController {
 
     public ResponseEntity<String> getData(String functionUrl){
         HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
-        ResponseEntity<String> response = restTemplate.exchange(url + functionUrl , HttpMethod.GET, entity, String.class);
-        return response;
+//        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+//        HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
+        String result = restTemplate.getForObject(url + functionUrl ,String.class);
+        return ResponseEntity.ok(result);
+//        return response;
     }
 }
